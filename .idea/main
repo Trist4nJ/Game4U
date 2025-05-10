@@ -5,11 +5,11 @@ from admin import menu_admin
 def menu_utilisateur(utilisateur):
     while True:
         print("\n=== MENU UTILISATEUR ===")
-        print("1. ðŸ” Rechercher un jeu")
-        print("2. ðŸ“¦ Louer un jeu")
-        print("3. ðŸ” Retourner un jeu")
-        print("4. ðŸ“‹ Voir mes locations")
-        print("5. âŒ Quitter")
+        print("1. 🔍 Rechercher un jeu")
+        print("2. 📦 Louer un jeu")
+        print("3. 🔁 Retourner un jeu")
+        print("4. 📋 Voir mes locations")
+        print("5. ❌ Quitter")
 
         choix = input("Choix : ")
 
@@ -22,22 +22,22 @@ def menu_utilisateur(utilisateur):
         elif choix == "4":
             afficher_locations_en_cours(utilisateur['id_utilisateur'])
         elif choix == "5":
-            print("ðŸ‘‹ Ã€ bientÃ´t !")
+            print("👋 À bientôt !")
             break
         else:
-            print("â— Choix invalide.")
+            print("❗ Choix invalide.")
 
 def main():
     utilisateur = connexion_utilisateur()
     if utilisateur is None:
-        print("âŒ Connexion Ã©chouÃ©e.")
+        print("❌ Connexion échouée.")
         return
 
     if utilisateur['role'].lower() == "admin":
-        print("\nðŸ” AccÃ¨s administrateur")
+        print("\n🔐 Accès administrateur")
         menu_admin()
     else:
-        print(f"\nðŸ‘‹ Bienvenue {utilisateur['nom']} !")
+        print(f"\n👋 Bienvenue {utilisateur['nom']} !")
         menu_utilisateur(utilisateur)
 
 if __name__ == "__main__":
