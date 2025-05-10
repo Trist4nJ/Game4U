@@ -1,9 +1,0 @@
-def menu_admin():
-    print("\n=== MENU ADMIN ===")
-    print("1. 🔍 Rechercher un jeu")
-    print("2. 🚪 Quitter")
-    choix = input("Choix : ")
-    if choix == "1":
-        from jeux import rechercher_jeux
-        rechercher_jeux()
-
