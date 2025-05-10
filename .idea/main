@@ -1,0 +1,44 @@
+from utilisateurs import connexion_utilisateur
+from jeux import afficher_locations_en_cours, retourner_un_jeu, louer_jeu, rechercher_jeux
+from admin import menu_admin
+
+def menu_utilisateur(utilisateur):
+    while True:
+        print("\n=== MENU UTILISATEUR ===")
+        print("1. ðŸ” Rechercher un jeu")
+        print("2. ðŸ“¦ Louer un jeu")
+        print("3. ðŸ” Retourner un jeu")
+        print("4. ðŸ“‹ Voir mes locations")
+        print("5. âŒ Quitter")
+
+        choix = input("Choix : ")
+
+        if choix == "1":
+            rechercher_jeux()
+        elif choix == "2":
+            louer_jeu(utilisateur['id_utilisateur'])
+        elif choix == "3":
+            retourner_un_jeu(utilisateur['id_utilisateur'])
+        elif choix == "4":
+            afficher_locations_en_cours(utilisateur['id_utilisateur'])
+        elif choix == "5":
+            print("ðŸ‘‹ Ã€ bientÃ´t !")
+            break
+        else:
+            print("â— Choix invalide.")
+
+def main():
+    utilisateur = connexion_utilisateur()
+    if utilisateur is None:
+        print("âŒ Connexion Ã©chouÃ©e.")
+        return
+
+    if utilisateur['role'].lower() == "admin":
+        print("\nðŸ” AccÃ¨s administrateur")
+        menu_admin()
+    else:
+        print(f"\nðŸ‘‹ Bienvenue {utilisateur['nom']} !")
+        menu_utilisateur(utilisateur)
+
+if __name__ == "__main__":
+    main()
