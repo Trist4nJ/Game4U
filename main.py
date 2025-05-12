@@ -475,7 +475,7 @@ def interface_principale(role, id_utilisateur):
 
         tk.Button(section_admin, text="Suivi des locations", command=voir_locations_admin).pack(pady=2)
         tk.Button(section_admin, text="Modifier stock", command=popup_modifier_stock).pack(pady=2)
-        ttk.Button(section_admin, text="Ajouter un jeu", command=ajouter_jeu).pack(pady=2)
+        tk.Button(section_admin, text="Ajouter un jeu", command=ajouter_jeu).pack(pady=2)
         tk.Button(section_admin, text="Modifier un jeu", command=modifier_jeu).pack(pady=2)
         tk.Button(section_admin, text="Supprimer un jeu", command=supprimer_jeu).pack(pady=2)
         tk.Button(section_admin, text="Gérer utilisateurs", command=gestion_utilisateurs).pack(pady=2)
