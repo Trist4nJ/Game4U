@@ -19,6 +19,11 @@ try:
 except mysql.connector.Error as err:
     print("Erreur de connexion :", err)
 
+def get_connection():
+    global conn
+    if not conn.is_connected():
+        conn.reconnect(attempts=3, delay=2)
+    return conn
 
 def louer_jeu(id_user, id_jeu):
     if not id_user or not id_jeu:
@@ -27,7 +32,7 @@ def louer_jeu(id_user, id_jeu):
     try:
         conn.rollback()
         conn.start_transaction()
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.callproc("louer_jeu", (int(id_user), int(id_jeu)))
         conn.commit()
         messagebox.showinfo("Succès", f"Le jeu {id_jeu} a bien été loué par l’utilisateur {id_user}.")
@@ -39,7 +44,7 @@ def retourner_jeu(id_location):
     try:
         conn.rollback()
         conn.start_transaction()
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.callproc("retourner_jeu", (int(id_location),))
         conn.commit()
         messagebox.showinfo("Succès", f"Le jeu lié à la location {id_location} a bien été retourné.")
@@ -49,7 +54,7 @@ def retourner_jeu(id_location):
 
 def retourner_location_si_autorise(id_user, id_location):
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("SELECT id_utilisateur FROM Location WHERE id_location = %s", (int(id_location),))
         result = cursor.fetchone()
         if result and result[0] == id_user:
@@ -63,7 +68,7 @@ def retourner_location_si_autorise(id_user, id_location):
 
 def afficher_jeux_disponibles():
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("SELECT id_jeu, nom, stock FROM jeux_disponibles")
         resultats = cursor.fetchall()
 
@@ -86,7 +91,7 @@ def afficher_jeux_disponibles():
 
 def afficher_top_jeux():
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("SELECT nom, note_moyenne, rang, nb_joueurs_min, nb_joueurs_max, age_min FROM top_jeux_notes")
         resultats = cursor.fetchall()
 
@@ -121,7 +126,7 @@ def rechercher_jeu():
         return
 
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         query = """
         SELECT j.nom, j.description_jeu, j.stock, IFNULL(a.note_moyenne, 'Aucune') AS note
         FROM Jeu j
@@ -158,7 +163,7 @@ def ajouter_avis(id_jeu, note_moyenne, note_bayesienne, nb_eval):
     try:
         conn.rollback()
         conn.start_transaction()
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.callproc("ajouter_avis", (int(id_jeu), float(note_moyenne), float(note_bayesienne), int(nb_eval)))
         conn.commit()
         messagebox.showinfo("Succès", "Avis ajouté avec succès.")
@@ -168,7 +173,7 @@ def ajouter_avis(id_jeu, note_moyenne, note_bayesienne, nb_eval):
 
 def afficher_historique_utilisateur(id_utilisateur):
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("""
             SELECT l.id_location, j.nom AS jeu, l.date_location, l.date_retour, l.statut
             FROM Location l
@@ -204,7 +209,7 @@ def afficher_historique_utilisateur(id_utilisateur):
 
 def voir_locations_admin():
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("CALL voir_locations_admin()")
         resultats = cursor.fetchall()
 
@@ -225,7 +230,7 @@ def voir_locations_admin():
 def ajouter_jeu():
     def valider():
         try:
-            cursor = conn.cursor()
+            cursor = get_connection().cursor()
             cursor.callproc("ajouter_jeu", (
                 entry_nom.get(),
                 entry_description.get(),
@@ -258,7 +263,7 @@ def ajouter_jeu():
 def modifier_jeu():
     def valider():
         try:
-            cursor = conn.cursor()
+            cursor = get_connection().cursor()
             cursor.callproc("modifier_jeu", (
                 int(entry_id_jeu.get()),
                 entry_nom.get(),
@@ -293,7 +298,7 @@ def modifier_jeu():
 def supprimer_jeu():
     def valider():
         try:
-            cursor = conn.cursor()
+            cursor = get_connection().cursor()
             cursor.callproc("supprimer_jeu", (int(entry_id.get()),))
             conn.commit()
             messagebox.showinfo("Succès", "Jeu supprimé.")
@@ -313,7 +318,7 @@ def supprimer_jeu():
 
 def gestion_utilisateurs():
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.execute("SELECT id_utilisateur, nom, email, role FROM Utilisateur")
         resultats = cursor.fetchall()
 
@@ -364,7 +369,7 @@ def gestion_utilisateurs():
 
 def modifier_stock_jeu(id_jeu, nouveau_stock):
     try:
-        cursor = conn.cursor()
+        cursor = get_connection().cursor()
         cursor.callproc("modifier_stock", (int(id_jeu), int(nouveau_stock)))
         conn.commit()
         messagebox.showinfo("Succès", "Stock mis à jour.")
@@ -502,7 +507,7 @@ def page_connexion():
         nom = entry_nom.get()
         mdp = entry_mdp.get()
         try:
-            cursor = conn.cursor()
+            cursor = get_connection().cursor()
             cursor.execute("SELECT id_utilisateur, role FROM Utilisateur WHERE nom = %s AND mot_de_passe = %s", (nom, mdp))
             result = cursor.fetchone()
             if result:
