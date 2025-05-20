@@ -6,9 +6,9 @@ from tkinter import messagebox, Toplevel, ttk
 try:
     conn = mysql.connector.connect(
         host="localhost",
-        port=3307,
+        port=3306,
         user="root",
-        password="anaelle",
+        password="Wilson",
         database="projetBDA",
         charset='utf8mb4',
         collation='utf8mb4_general_ci',
